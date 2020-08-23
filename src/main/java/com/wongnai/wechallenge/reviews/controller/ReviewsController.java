@@ -5,7 +5,7 @@ import com.wongnai.wechallenge.reviews.service.DatasetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("reviews")
@@ -20,9 +20,8 @@ public class ReviewsController {
     }
 
     @GetMapping()
-    public List<Review> searchReviews(@RequestParam String query) {
-        // TODO:
-        return null;
+    public Set<Review> searchReviews(@RequestParam(name = "query") String foodName) {
+        return datasetService.searchReviews(foodName);
     }
 
     @PutMapping("/{id}")

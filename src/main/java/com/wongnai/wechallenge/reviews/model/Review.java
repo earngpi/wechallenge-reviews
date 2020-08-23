@@ -6,6 +6,7 @@ import org.springframework.lang.NonNull;
 
 @Document(indexName = "reviews")
 public class Review {
+
     @Id
     private int reviewId;
     @NonNull
