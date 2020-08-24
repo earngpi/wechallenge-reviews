@@ -13,8 +13,12 @@ import java.util.Set;
 @RequestMapping("reviews")
 public class ReviewsController {
 
+    private final DatasetService datasetService;
+
     @Autowired
-    private DatasetService datasetService;
+    public ReviewsController(DatasetService datasetService) {
+        this.datasetService = datasetService;
+    }
 
     @GetMapping("/{id}")
     public Review getReview(@PathVariable int id) {
@@ -32,6 +36,7 @@ public class ReviewsController {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,
                     "Review IDs in request URL and request body do not match.");
         }
+
         return datasetService.updateReview(updatedReview);
     }
 }
