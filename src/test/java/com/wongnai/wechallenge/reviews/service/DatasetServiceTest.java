@@ -115,6 +115,8 @@ public class DatasetServiceTest {
         verify(reviewRepositoryMock, times(1)).findReviewsByFoodName(FOOD_NAME_1);
     }
 
+    // ------------------------------------------------------------------ testUpdateReview ------------------------------------------------------------------
+
     @Test
     public void testUpdateReview_foundReviewInDb_returnedReviewIsSameAsInput() {
         doReturn(updatedReview).when(reviewRepositoryMock).findReviewByReviewId(anyInt());
