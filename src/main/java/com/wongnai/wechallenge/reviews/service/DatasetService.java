@@ -1,5 +1,6 @@
 package com.wongnai.wechallenge.reviews.service;
 
+import com.wongnai.wechallenge.reviews.exception.ReviewNotFoundException;
 import com.wongnai.wechallenge.reviews.model.Food;
 import com.wongnai.wechallenge.reviews.repository.FoodRepository;
 import com.wongnai.wechallenge.reviews.repository.ReviewRepository;
@@ -12,6 +13,8 @@ import java.util.*;
 
 @Service
 public class DatasetService {
+
+    private static final String NO_REVIEWS_MATCHING_ID_MSG = "No reviews matching specified review ID";
 
     private final ReviewRepository reviewRepository;
 
@@ -26,7 +29,7 @@ public class DatasetService {
     public Review getReview(int id) {
         Review review = reviewRepository.findReviewByReviewId(id);
         if (review == null) {
-            // TODO: throw exception - same one as updateReview
+            throw new ReviewNotFoundException(NO_REVIEWS_MATCHING_ID_MSG);
         }
 
         return review;
@@ -51,7 +54,7 @@ public class DatasetService {
 
     public Review updateReview(Review updatedReview) {
         if (reviewRepository.findReviewByReviewId(updatedReview.getReviewId()) == null) {
-            // TODO: throw exception - same one as getReview
+            throw new ReviewNotFoundException(NO_REVIEWS_MATCHING_ID_MSG);
         }
 
         return reviewRepository.save(updatedReview);

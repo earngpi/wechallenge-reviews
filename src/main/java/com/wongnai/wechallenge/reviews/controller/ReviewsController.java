@@ -3,7 +3,9 @@ package com.wongnai.wechallenge.reviews.controller;
 import com.wongnai.wechallenge.reviews.model.Review;
 import com.wongnai.wechallenge.reviews.service.DatasetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Set;
 
@@ -27,7 +29,8 @@ public class ReviewsController {
     @PutMapping("/{id}")
     public Review updateReview(@PathVariable int id, @RequestBody Review updatedReview) {
         if (id != updatedReview.getReviewId()) {
-            // TODO: throw exceptions
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,
+                    "Review IDs in request URL and request body do not match.");
         }
         return datasetService.updateReview(updatedReview);
     }
