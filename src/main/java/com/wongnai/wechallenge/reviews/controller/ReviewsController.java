@@ -14,7 +14,7 @@ import java.util.Set;
 public class ReviewsController {
 
     @Autowired
-    DatasetService datasetService;
+    private DatasetService datasetService;
 
     @GetMapping("/{id}")
     public Review getReview(@PathVariable int id) {

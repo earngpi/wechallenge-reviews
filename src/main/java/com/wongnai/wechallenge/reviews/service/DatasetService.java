@@ -16,15 +16,11 @@ public class DatasetService {
 
     private static final String NO_REVIEWS_MATCHING_ID_MSG = "No reviews matching specified review ID";
 
-    private final ReviewRepository reviewRepository;
-
-    private final FoodRepository foodRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @Autowired
-    public DatasetService(ReviewRepository reviewRepository, FoodRepository foodRepository) {
-        this.reviewRepository = reviewRepository;
-        this.foodRepository = foodRepository;
-    }
+    private FoodRepository foodRepository;
 
     public Review getReview(int id) {
         Review review = reviewRepository.findReviewByReviewId(id);
