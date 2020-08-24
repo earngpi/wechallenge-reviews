@@ -19,7 +19,7 @@ public class ReviewsController {
         return datasetService.getReview(id);
     }
 
-    @GetMapping()
+    @GetMapping
     public Set<Review> searchReviews(@RequestParam(name = "query") String foodName) {
         return datasetService.searchReviews(foodName);
     }
