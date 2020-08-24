@@ -15,18 +15,17 @@ import java.util.Map;
 @ControllerAdvice
 public class ControllerAdvicer {
 
-    @ExceptionHandler({MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
-    protected ResponseEntity<Object> handleInvalidURLException(Exception e) {
+    @ExceptionHandler({MissingServletRequestParameterException.class})
+    protected ResponseEntity<Object> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         Map<String, Object> body = new HashMap<>();
+        body.put("errorMessage", "URL is missing a parameter '" + e.getParameterName() + "'");
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 
-        String errMsg = "URL is invalid - ";
-        if (e instanceof MissingServletRequestParameterException) {
-            errMsg = errMsg + "parameter '" + ((MissingServletRequestParameterException) e).getParameterName() + "' is missing.";
-        } else {
-            errMsg = errMsg + "incorrect path reviews/" + ((MethodArgumentTypeMismatchException) e).getValue();
-        }
-
-        body.put("errorMessage", errMsg);
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+    protected ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("errorMessage", "URL has invalid format - 'reviews/" + e.getValue() + "'");
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
