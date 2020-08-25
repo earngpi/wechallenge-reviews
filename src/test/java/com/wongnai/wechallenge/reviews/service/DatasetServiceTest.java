@@ -115,7 +115,7 @@ public class DatasetServiceTest {
         verify(reviewRepositoryMock, times(1)).findReviewsByFoodName(FOOD_NAME_1);
     }
 
-    // ------------------------------------------------------------------ testUpdateReview ------------------------------------------------------------------
+// ------------------------------------------------------------------- testUpdateReview -------------------------------------------------------------------
 
     @Test
     public void testUpdateReview_foundReviewInDb_returnedReviewIsSameAsInput() {
