@@ -53,6 +53,7 @@ public class ControllerAdvicer {
     protected ResponseEntity<Object> handleException(Exception e) {
         Map<String, Object> body = new HashMap<>();
         body.put("errorMessage", "Unexpected error has occurred.");
+        e.printStackTrace();
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
