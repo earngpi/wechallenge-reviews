@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,9 +46,7 @@ public class ControllerAdvicer {
 
     @ExceptionHandler({ReviewNotFoundException.class})
     protected ResponseEntity<Object> ReviewNotFoundException(ReviewNotFoundException e) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("errorMessage", e.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @ExceptionHandler({Exception.class})
