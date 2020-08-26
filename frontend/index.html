@@ -1,0 +1,171 @@
+<html>
+<head>
+  <title>Review App (Issrin P.)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="./resources/css/index.css" type="text/css" rel="stylesheet">
+</head>
+
+<html>
+<body>
+
+  <div class="tab">
+    <button class="tablinks" onclick="toggleTab(event, 'getReview')" id="defaultOpen">Get Review</button>
+    <button class="tablinks" onclick="toggleTab(event, 'searchReview')">Search Reviews</button>
+  </div>
+      
+  <div id="getReview" class="tabcontent">
+    <h3>Get Review</h3>
+    <table id="getInputTable">
+      <tr>
+        <td>Review ID:</td>
+        <td><input type="text" id="getReviewID" /></td>
+        <td><input type="button" value="GET" onclick="sendGetReviewRequest('getReviewID', 'getError');"/></td>
+      </tr>
+      <tr><td colspan="3"><div id="getError"></div></td></tr>
+    </table>
+    <table id="getReviewTable">
+      <tr>
+        <td id="getReviewResult"></td>
+        <td id="getReviewIdResult"></td>
+      </tr>
+      <tr><td><input type="submit" value="UPDATE" id="updateButton" onclick="updateReview('getReviewIdResult')"/></td></tr>
+    </table>
+  </div>
+      
+  <div id="searchReview" class="tabcontent">
+    <h3>Search Reviews</h3>
+    <table id="searchInputTable">
+      <tr>
+        <td>Food Word:</td>
+        <td><input type="text" id="searchFoodWord" /></td>
+        <td><input type="button" id="create" value="SEARCH" onclick="sendSearchReviewsRequest('searchFoodWord', 'searchError');"/></td>
+      </tr>
+      <tr><td colspan="3"><div id="searchError"></div></td></tr>
+    </table>
+    <table id="searchReviewTable" border="1"></table>
+  </div>
+
+  <script>
+    document.getElementById("defaultOpen").click();
+    document.getElementById("getReviewTable").style.display = "none";
+    document.getElementById("getReviewIdResult").style.display = "none";
+    document.getElementById("searchReviewTable").style.display = "none";
+
+    function sendGetReviewRequest(idDiv, errDiv) {
+      const errMsg = validateReviewId(idDiv, errDiv)
+      if (errMsg != "") { return; }
+
+      const reviewId = document.getElementById(idDiv).value;
+      response = sendRequest("http://localhost:8080/reviews/" + reviewId);
+      response.then(function(reviewObj) {
+        if (reviewObj.length == 0) {
+          document.getElementById("getReviewResult").innerHTML = "No reviews associated with the input review ID were found";
+          document.getElementById("updateButton").style.display = "none"
+        } else {
+          document.getElementById("getReviewResult").innerHTML = reviewObj["review"];
+          document.getElementById("getReviewIdResult").innerHTML = reviewObj["reviewId"]
+        }
+        document.getElementById("getReviewTable").style.display = "block";
+      })
+    }
+
+    function validateReviewId(idDiv, errDiv) {
+      var input = document.getElementById(idDiv).value;
+      var errMsg = ""
+
+      if (input == "")
+        errMsg = "<span style='color:red'>Please input a review ID</span>";
+      else if (isNaN(input))
+        errMsg = "<span style='color:red'>A review ID should be a number</span>";
+      
+      document.getElementById(errDiv).innerHTML = errMsg;
+      return errMsg;
+    }
+
+    function sendSearchReviewsRequest(foodWordDiv, errDiv) {
+      const errMsg = validateFoodWord(foodWordDiv, errDiv)
+      if (errMsg != "") { return; }
+
+      var table = document.getElementById("searchReviewTable");
+      const foodWord = document.getElementById(foodWordDiv).value;
+      response = sendRequest("http://localhost:8080/reviews?query=" + foodWord);
+      response.then(function(reviewsObj) {
+        document.getElementById("searchReviewTable").innerHTML = "";
+        document.getElementById("searchReviewTable").style.display = "block";
+
+        if (reviewsObj.length == 0) {
+          var row = table.insertRow(i)
+          var cell1 = row.insertCell(0)
+          cell1.innerHTML = "No reviews containing the input food word were found"
+          return;
+        }
+
+        for (var i = 0; i < reviewsObj.length; i++) {
+          var row = table.insertRow(i)
+          var cell1 = row.insertCell(0)
+          var cell2 = row.insertCell(1)
+          var reviewIdAtt = "reviewId" + i
+
+          cell1.innerHTML = reviewsObj[i]["review"]
+                            .replace(/<keyword>/g, '<span style="background-color: pink">')
+                            .replace(/<\/keyword>/g, '</span>')
+          
+          var button = document.createElement('BUTTON')
+          button.innerHTML = "UPDATE"
+          button.onclick = function (reviewIdAtt) { 
+            return function() {
+              updateReview(reviewIdAtt); 
+            }
+          }(reviewIdAtt)
+          cell2.appendChild(button);
+
+          var hiddenDiv = document.createElement("div");
+          hiddenDiv.style.display = "none"
+          hiddenDiv.setAttribute("type", "hidden");
+          hiddenDiv.id = reviewIdAtt
+          hiddenDiv.innerHTML = reviewsObj[i]["reviewId"];
+          cell2.appendChild(hiddenDiv)
+          
+          console.log(document.getElementById(reviewIdAtt).innerHTML)
+        }
+      });
+    }
+
+    function validateFoodWord(foodWordDiv, errDiv) {
+      var input = document.getElementById(foodWordDiv).value;
+      var errMsg = ""
+
+      if (input == "")
+        errMsg = "<span style='color:red'>Please input a food word</span>";
+      
+      document.getElementById(errDiv).innerHTML = errMsg;
+      return errMsg;
+    }
+
+    function sendRequest(url) {
+      return fetch(url)
+        .then(function (data) {
+          return data.json();
+        })
+        .catch(function (error) {
+          console.log("Error: " + error);
+        });
+    }
+
+    function updateReview(divId) {
+      window.location.href = "./update.html?reviewId=" + document.getElementById(divId).innerHTML
+    }
+
+    function toggleTab(event, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) { tabcontent[i].style.display = "none"; }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) { tablinks[i].className = tablinks[i].className.replace(" active", ""); }
+        document.getElementById(tabName).style.display = "block";
+        event.currentTarget.className += " active";
+    } 
+  </script>
+      
+</body>
+</html>

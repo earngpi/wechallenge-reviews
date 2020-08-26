@@ -1,0 +1,90 @@
+<html>
+<head>
+  <title>Update Review (Issrin P.)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<style>
+    body {font-family: Arial;}
+
+    textarea {
+        resize: none;
+        overflow: auto;
+    }
+
+    .button {
+        background-color: grey; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+    }
+</style>
+
+<body>
+
+    <div id="getReview" class="tabcontent">
+        <h3>Update Review</h3>
+        <textarea reviewId="0" id="updateText" rows=30 cols=100></textarea><br>
+        <input type="button" class="button" value="SAVE" onclick="updateReview()"/>
+        <input type="button" class="button" value="HOME" onclick="goToIndex()"/>
+      </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        var reviewId = urlParams.get("reviewId");
+
+        response = sendGETRequest("http://localhost:8080/reviews/" + reviewId);
+        response.then(function(reviewObj) {
+            document.getElementById("updateText").innerHTML = reviewObj["review"]
+            document.getElementById("updateText").setAttribute("reviewId", reviewId)
+        })
+
+        function updateReview() {
+            if (document.getElementById("updateText").value == "") {
+                window.alert("A review cannot be empty. Please write something.")
+                return;
+            }
+
+            var updatedReview = {};
+            updatedReview["review"] = document.getElementById("updateText").value
+            updatedReview["reviewId"] = document.getElementById("updateText").getAttribute("reviewId")
+            sendPUTRequest(
+                "http://localhost:8080/reviews/" + document.getElementById("updateText").getAttribute("reviewId"), 
+                updatedReview).then(function(reviewObj){
+                    if (confirm("The review has been updated  - Go to homepage?")) {
+                        goToIndex()
+                    }
+                })
+        }
+
+        function sendGETRequest(url) {
+            return fetch(url)
+                .then(function (data) {
+                return data.json();
+                })
+                .catch(function (error) {
+                console.log("Error: " + error);
+            });
+        }
+
+        function sendPUTRequest(url, updatedReview) {
+            return fetch(url, {
+                method: 'PUT',
+                headers: {'Content-type': 'application/json; charset=UTF-8'},
+                body: JSON.stringify(updatedReview)
+                }).then(function (data) {
+                return data.json();
+                })
+                .catch(function (error) {
+                console.log("Error: " + error); })
+        }
+
+        function goToIndex() {
+            window.location.href = "./index.html"
+        }
+    </script>
+</body>
