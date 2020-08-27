@@ -1,0 +1,35 @@
+version: "2.4"
+
+services:
+
+  elasticsearch:
+    image: elasticsearch:7.9.0
+    container_name: elasticsearch
+    environment:
+      discovery.type: single-node
+    ports: [9200:9200]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db-init:
+    build: ./datasets
+    restart: on-failure
+
+  web-backend:
+    build: ./backend
+    ports: [8080:8080]
+    restart: always
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+  web-frontend:
+    build: ./frontend 
+    ports: [5555:80]
+    depends_on:
+      elasticsearch:
+        condition: service_healthy

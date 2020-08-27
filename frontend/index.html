@@ -19,7 +19,7 @@
       <tr>
         <td>Review ID:</td>
         <td><input type="text" id="getReviewID" /></td>
-        <td><input type="button" value="GET" onclick="sendGetReviewRequest('getReviewID', 'getError');"/></td>
+        <td><input type="button" value="GET" onclick="sendGetReviewRequest('getReviewID', 'getError', 'getReviewResult');"/></td>
       </tr>
       <tr><td colspan="3"><div id="getError"></div></td></tr>
     </table>
@@ -38,7 +38,7 @@
       <tr>
         <td>Food Word:</td>
         <td><input type="text" id="searchFoodWord" /></td>
-        <td><input type="button" id="create" value="SEARCH" onclick="sendSearchReviewsRequest('searchFoodWord', 'searchError');"/></td>
+        <td><input type="button" id="create" value="SEARCH" onclick="sendSearchReviewsRequest('searchFoodWord', 'searchError', 'searchReviewTable');"/></td>
       </tr>
       <tr><td colspan="3"><div id="searchError"></div></td></tr>
     </table>
@@ -51,8 +51,8 @@
     document.getElementById("getReviewIdResult").style.display = "none";
     document.getElementById("searchReviewTable").style.display = "none";
 
-    function sendGetReviewRequest(idDiv, errDiv) {
-      const errMsg = validateReviewId(idDiv, errDiv)
+    function sendGetReviewRequest(idDiv, errDiv, txtDiv) {
+      const errMsg = validateReviewId(idDiv, errDiv, txtDiv)
       if (errMsg != "") { return; }
 
       const reviewId = document.getElementById(idDiv).value;
@@ -70,7 +70,7 @@
       })
     }
 
-    function validateReviewId(idDiv, errDiv) {
+    function validateReviewId(idDiv, errDiv, txtDiv) {
       var input = document.getElementById(idDiv).value;
       var errMsg = ""
 
@@ -80,11 +80,12 @@
         errMsg = "<span style='color:red'>A review ID should be a number</span>";
       
       document.getElementById(errDiv).innerHTML = errMsg;
+      document.getElementById(txtDiv).innerHTML = "";
       return errMsg;
     }
 
-    function sendSearchReviewsRequest(foodWordDiv, errDiv) {
-      const errMsg = validateFoodWord(foodWordDiv, errDiv)
+    function sendSearchReviewsRequest(foodWordDiv, errDiv, txtDiv) {
+      const errMsg = validateFoodWord(foodWordDiv, errDiv, txtDiv)
       if (errMsg != "") { return; }
 
       var table = document.getElementById("searchReviewTable");
@@ -126,19 +127,18 @@
           hiddenDiv.id = reviewIdAtt
           hiddenDiv.innerHTML = reviewsObj[i]["reviewId"];
           cell2.appendChild(hiddenDiv)
-          
-          console.log(document.getElementById(reviewIdAtt).innerHTML)
         }
       });
     }
 
-    function validateFoodWord(foodWordDiv, errDiv) {
+    function validateFoodWord(foodWordDiv, errDiv, txtDiv) {
       var input = document.getElementById(foodWordDiv).value;
       var errMsg = ""
 
       if (input == "")
         errMsg = "<span style='color:red'>Please input a food word</span>";
       
+      document.getElementById(txtDiv).innerHTML = "";
       document.getElementById(errDiv).innerHTML = errMsg;
       return errMsg;
     }
