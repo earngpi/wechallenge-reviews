@@ -1,0 +1,63 @@
+openapi: 3.0.1
+info:
+  title: Review Application
+  description: defaultDescription
+  version: '0.1'
+servers:
+  - url: 'http://localhost:8080'
+paths:
+  /reviews:
+    get:
+      description: A GET API that accepts a query string and returns a list of reviews containing the string
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+          example: wasabi%20mayo
+      responses:
+        '200':
+          description: A JSON response of either a list of reviews or an empty list is returned. An empty list indicates there are no reviews containing the query string.
+      servers:
+        - url: 'http://localhost:8080'
+    servers:
+      - url: 'http://localhost:8080'
+  /reviews/{reviewId}:
+    put:
+      description: A PUT API at path /{reviewId} that accepts a JSON body containing a review ID and review text - if review IDs in body and URL path match, it updates backend storage accordingly
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                review:
+                  type: string
+                reviewId:
+                  type: integer
+            examples:
+              '0':
+                value: |-
+                  {
+                      "reviewId": {reviewId},
+                      "review": "{EditedText}"
+                  }
+      responses:
+        '200':
+          description: A JSON response containing 'updated' containing a review ID and review text is returned
+        '400':
+          description: A JSON response containing an error message saying review IDs in body and path do not match is returned. Clients receiving this response should correct their requests and try again.
+      servers:
+        - url: 'http://localhost:8080'
+    servers:
+      - url: 'http://localhost:8080'
+  /reviews/{reviewId}:
+    get:
+      description: A GET API at path /{reviewId} that returns a review matching the review ID specified in URL path
+      responses:
+        '200':
+          description: A JSON response that either contains a review ID and review text or an empty list is returned. An empty list indicates there are no reviews matching the specified review ID.
+      servers:
+        - url: 'http://localhost:8080'
+    servers:
+      - url: 'http://localhost:8080'
